@@ -8,6 +8,7 @@ export function Board(props)
         <Box value={props.board[index]} index={index} click={() => props.handleClick(index)}/>   
         );
     }
+    
     return(
     <div className="board">
         {createBox(0)}

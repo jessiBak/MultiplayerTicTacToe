@@ -1,50 +1,55 @@
 import logo from './logo.svg';
 import './App.css';
-import { ListItem } from './ListItem.js';
-import { useState, useRef, useEffect } from 'react';
+import {Board} from './Board.js';
+import './Board.css'
+import {useState, useRef, useEffect} from 'react';
 import io from 'socket.io-client';
 
 const socket = io(); // Connects to socket connection
+export function Box(props)
+{
+    return <div className="box" click={props.boxclick}>{props.value}</div>;
+}
 
 function App() {
-  const [messages, setMessages] = useState([]); // State variable, list of messages
-  const inputRef = useRef(null); // Reference to <input> element
-
-  function onClickButton() {
-    if (inputRef != null) {
-      const message = inputRef.current.value;
-      // If your own client sends a message, we add it to the list of messages to 
-      // render it on the UI.
-      setMessages(prevMessages => [...prevMessages, message]);
-      socket.emit('chat', { message: message });
+  const [board, setBoard] = useState(Array(9).fill(null)); //initially an empty array with 9 elements
+  const [isX, setX] = useState(0);
+        
+  const boxClick = (index) =>
+  {
+    let boxdata;
+    if(isX === 0)
+    {
+      board[index] = "X";
+      setBoard(prevBoard => [...prevBoard]);
+      setX(isX + 1);
+      boxdata = "X";
     }
+    else
+    {
+      board[index] = "O";
+      setBoard(prevBoard => [...prevBoard]);
+      setX(isX - 1);
+      boxdata = "O";
+    }
+      socket.emit('box-clicked', { boxIndex: index, boxValue: boxdata });  
   }
-
-  // The function inside useEffect is only run whenever any variable in the array
-  // (passed as the second arg to useEffect) changes. Since this array is empty
-  // here, then the function will only run once at the very beginning of mounting.
-  useEffect(() => {
-    // Listening for a chat event emitted by the server. If received, we
-    // run the code in the function that is passed in as the second arg
-    socket.on('chat', (data) => {
-      console.log('Chat event received!');
-      console.log(data);
-      // If the server sends a message (on behalf of another client), then we
-      // add it to the list of messages to render it on the UI.
-      setMessages(prevMessages => [...prevMessages, data.message]);
-    });
-  }, []);
-
+  
+  useEffect(() => 
+      {
+        socket.on('box-clicked', (data) => 
+        {
+          console.log('A box was clicked!');
+          console.log(data);
+          board[data.boxIndex] = data.boxValue;
+          //setBoard(prevBoard => [...prevBoard]);
+          console.log('Did it work?')
+        });
+      }, []); 
+  
   return (
-    <div>
-      <h1>Chat Messages</h1>
-      Enter message here: <input ref={inputRef} type="text" />
-      <button onClick={onClickButton}>Send</button>
-      <ul>
-        {messages.map((item, index) => <ListItem key={index} name={item} />)}
-      </ul>
-    </div>
+      <Board board={board} handleClick={boxClick}/>
   );
-}
+};
 
 export default App;
