@@ -1,0 +1,15 @@
+.board {
+	width: 300px; /* Total horizontal dimensions */
+	height: 300px; /* Total vertical dimensions */
+	display: grid; /* Enables CSS Grid */ 
+	grid-template-columns: repeat(3, 1fr); /* Total horizontal space broken into 3 columns */
+    grid-template-rows: repeat(3, 1fr); /* Total vertical space broken into 3 rows */
+    margin: auto;
+    padding: 30px;
+}
+
+.box {
+  border: 1px solid black; 
+  padding: 30px;
+  text-align: center;
+}
