@@ -20,20 +20,20 @@ function App()
   {
     let boxdata;
     let newBoard = [...board];
+    
+    //alternating between Xs and Os on click
     if(isX % 2 === 0)
     {
       newBoard[index] = "X";
       setBoard(newBoard);
-      setX(isX + 1);
       boxdata = "X";
     }
-    else
-    {
       newBoard[index] = "O";
       setBoard(newBoard);
-      setX(isX + 1);
       boxdata = "O";
-    }
+      
+      setX(isX + 1);
+      
       socket.emit('box-clicked', { boxIndex: index, boxValue: boxdata });  
   }
   
@@ -48,14 +48,8 @@ function App()
           newBoard[data.boxIndex] = data.boxValue;
           setBoard(newBoard);
           console.log('Updated board: ' + String(newBoard));
+          console.log('pls work...');
           setX(isX + 1);
-          
-          // console.log("prevBoard before: " + String(board) + "\n");
-          // board[data.boxIndex] = data.boxValue;
-          // console.log("board after changing index: " + String(board) + "\n");
-          // setBoard(prevBoard => [...prevBoard]);
-          // console.log("board after setBoard call: " + String(board) + "\n");
-          // console.log('Did it work?');
         });
       }, [board]); 
   

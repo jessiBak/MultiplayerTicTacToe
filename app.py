@@ -26,7 +26,6 @@ def on_connect():
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected!')
-
     
 @socketio.on('box-clicked')
 def on_box_clicked(data):
