@@ -19,18 +19,19 @@ function App()
   const boxClick = (index) =>
   {
     let boxdata;
-    if(isX === 0)
+    let newBoard = [...board];
+    if(isX % 2 === 0)
     {
-      board[index] = "X";
-      setBoard(prevBoard => [...prevBoard]);
+      newBoard[index] = "X";
+      setBoard(newBoard);
       setX(isX + 1);
       boxdata = "X";
     }
     else
     {
-      board[index] = "O";
-      setBoard(prevBoard => [...prevBoard]);
-      setX(isX - 1);
+      newBoard[index] = "O";
+      setBoard(newBoard);
+      setX(isX + 1);
       boxdata = "O";
     }
       socket.emit('box-clicked', { boxIndex: index, boxValue: boxdata });  
@@ -42,11 +43,21 @@ function App()
         {
           console.log('A box was clicked!');
           console.log("box index: " + String(data.boxIndex) + "\nbox value: " + data.boxValue);
-          board[data.boxIndex] = data.boxValue;
-          setBoard(board => [...board]);
-          console.log('Did it work?');
+          let newBoard = [...board];
+          console.log('Old board: ' + String(newBoard));
+          newBoard[data.boxIndex] = data.boxValue;
+          setBoard(newBoard);
+          console.log('Updated board: ' + String(newBoard));
+          setX(isX + 1);
+          
+          // console.log("prevBoard before: " + String(board) + "\n");
+          // board[data.boxIndex] = data.boxValue;
+          // console.log("board after changing index: " + String(board) + "\n");
+          // setBoard(prevBoard => [...prevBoard]);
+          // console.log("board after setBoard call: " + String(board) + "\n");
+          // console.log('Did it work?');
         });
-      }, []); 
+      }, [board]); 
   
   return (
       <Board board={board} handleClick={boxClick}/>
