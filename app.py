@@ -13,6 +13,7 @@ socketio = SocketIO(
     json=json,
     manage_session=False
 )
+clients = []
 
 @app.route('/', defaults={"filename": "index.html"})
 @app.route('/<path:filename>')
@@ -20,11 +21,11 @@ def index(filename):
     return send_from_directory('./build', filename)
 
 @socketio.on('connect')
-def on_connect():
+def on_connect(client):
     print('User connected!')
 
 @socketio.on('disconnect')
-def on_disconnect():
+def on_disconnect(client):
     print('User disconnected!')
     
 @socketio.on('box-clicked')

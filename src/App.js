@@ -6,10 +6,6 @@ import {useState, useRef, useEffect} from 'react';
 import io from 'socket.io-client';
 
 const socket = io(); // Connects to socket connection
-// export function Box(props)
-// {
-//     return <div className="box" click={props.boxclick}>{props.value}</div>;
-// }
 
 function App() 
 {
