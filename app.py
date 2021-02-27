@@ -13,11 +13,11 @@ socketio = SocketIO(
     json=json,
     manage_session=False
 )
+client_types = {}
 
-clients = {}
 num_Of_Clients = 0
 
-@app.route('/', defaults={"filename": "index.html"}, methods=['POST'])
+@app.route('/', defaults={"filename": "index.html"})
 @app.route('/<path:filename>')
 def index(filename):
     return send_from_directory('./build', filename)
@@ -25,17 +25,6 @@ def index(filename):
 @socketio.on('connect')
 def on_connect():
     print('User connected!')
-    global num_Of_Clients
-    uType = ""
-    num_Of_Clients += 1
-    if(num_Of_Clients == 1):
-         uType = "Player_1"
-    elif(num_Of_Clients == 2):
-         uType = "Player_2"
-    else:
-         uType = "Spectator_" + str(num_Of_Clients - 2)
-    uInfo = {'uType': uType, 'client_num': num_Of_Clients}
-    socketio.emit('user-type-granted', uInfo, broadcast=False, include_self=True)
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -49,10 +38,30 @@ def on_box_clicked(data):
 #map client usernames to ID numbers
 @socketio.on('login_success')
 def on_l_success(data):
-    print(str(data))
-    clients[data.id] = data.userName;
-    socketio.emit('new-user-notice', {'new_user': data.userName}, broadcast=True, include_self=False)
-    
+    print("login_success data: " + str(data))
+    global num_Of_Clients
+    uType = ""
+    bValue = ""
+    num_Of_Clients+=1
+    if(num_Of_Clients == 1):
+         uType = "Player1"
+         bValue = "X"
+    elif(num_Of_Clients == 2):
+         uType = "Player2"
+         bValue = "O"
+    else:
+         uType = "Spectator" + str(num_Of_Clients - 2)
+         bValue = ""
+    uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
+    client_types[data['username']] = uType
+    print("client_types: \n" + str(client_types))
+    socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
+    socketio.emit('new-user-notice', data, broadcast=True, include_self=False)
+ 
+@socketio.on('user_type_query')
+def on_user_query(data):
+    print("user_query data: " + data)
+    socketio.emit('user_type_result', {'result': client_types[data]})
 
 socketio.run(
     app,

@@ -15,56 +15,51 @@ function App()
   const [isX, setX] = useState(0);
   const [isLogged, setLogin] = useState(false);
   const [userName, setUserName] = useState(null);
+  const [userTypes, setUserTypes] = useState({});
   const inputRef = useRef(null);
   
 //These are provided by the server upon connect
-  let userType = null;
-  let userID = 0;
- 
-  socket.on('user-type-granted', (info) =>
-  {
-    userType = info.uType;
-    userID = info.client_num;
-  });     
+   let userType;
+   let bval;
 
   socket.on('new-user-notice', (data) =>
   {
-    console.log("New user: " + data.new_user);
+    console.log("New user: " + data.username);
   });
-  
+      
   const boxClick = (index) =>
   {
-    let boxdata;
-    let newBoard = [...board];
-    
-    //alternating between Xs and Os on click
-    if(isX % 2 === 0) //(userType == "Player_1")
-    {
-      newBoard[index] = "X";
-      setBoard(newBoard);
-      boxdata = "X";
-    }
-    else //else if(userType == "Player_2")
-    {
-      newBoard[index] = "O";
-      setBoard(newBoard);
-      boxdata = "O";
-    } // move emit inside if-statements
-      setX(isX + 1);
-      
-      socket.emit('box-clicked', { boxIndex: index, boxValue: boxdata });  
-  }
+      console.log(userName + " clicked a box");
+      let boxdata;
+      let newBoard = [...board];
+      if(userTypes[userName] === "Player1")
+      {
+        console.log(userName + " is " + userTypes[userName]); 
+        newBoard[index] = "X";
+        setBoard(newBoard);
+        socket.emit('box-clicked', { boxIndex: index, playerType: userTypes[userName]});
+      }
+      else if(userTypes[userName] === "Player2")
+      {
+        console.log(userName + " is " + userTypes[userName]); 
+        newBoard[index] = "O";
+        setBoard(newBoard);
+        socket.emit('box-clicked', { boxIndex: index,  playerType: userTypes[userName]});
+      } 
+      else
+      {
+        console.log("Spectators cannot change the state of the board."); 
+      }
+  };
   
   const loginClick = () =>
   {
     if(inputRef != null)
     {
-      
       const uName = inputRef.current.value;
       setUserName(uName);
       setLogin(true);
-      
-      socket.emit('login_success', {username: uName, id: userID});
+      socket.emit('login_success', {'username': uName}); 
     }
   }
   
@@ -72,16 +67,26 @@ function App()
       {
         socket.on('box-clicked', (data) => 
         {
-          console.log('A box was clicked!');
-          console.log("box index: " + String(data.boxIndex) + "\nbox value: " + data.boxValue);
           let newBoard = [...board];
-          console.log('Old board: ' + String(newBoard));
-          newBoard[data.boxIndex] = data.boxValue;
-          setBoard(newBoard);
-          console.log('Updated board: ' + String(newBoard));
-          setX(isX + 1);
+          if(data.playerType === "Player1") 
+          {
+            newBoard[data.boxIndex] = "X";
+            setBoard(newBoard);
+          }
+          else if(data.playerType === "Player2")
+          {
+            newBoard[data.boxIndex] = "O";
+            setBoard(newBoard);
+          }
         });
-      }, [board]); 
+        
+        socket.on('user-type-granted', (data) =>
+        {
+          userType = data.userInfo.uType;
+          bval = data.userInfo.bval;
+          setUserTypes(data.client_info);
+        });  
+      }, [board, userTypes]); 
       
   if(isLogged)
   {
