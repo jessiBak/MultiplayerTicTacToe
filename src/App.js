@@ -17,6 +17,7 @@ function App()
   const [userName, setUserName] = useState(null);
   const [userTypes, setUserTypes] = useState({});
   const inputRef = useRef(null);
+  const [isTurn, setTurn] = useState(false);
   
 //These are provided by the server upon connect
    let userType;
@@ -32,23 +33,29 @@ function App()
       console.log(userName + " clicked a box");
       let boxdata;
       let newBoard = [...board];
-      if(userTypes[userName] === "Player1")
+      if(userTypes[userName] === "Player1" && isTurn)
       {
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "X";
         setBoard(newBoard);
         socket.emit('box-clicked', { boxIndex: index, playerType: userTypes[userName]});
+        setTurn(false);
       }
-      else if(userTypes[userName] === "Player2")
+      else if(userTypes[userName] === "Player2" && isTurn)
       {
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "O";
         setBoard(newBoard);
         socket.emit('box-clicked', { boxIndex: index,  playerType: userTypes[userName]});
+        setTurn(false);
       } 
-      else
+      else if(userTypes[userName].includes("Spectator"))
       {
         console.log("Spectators cannot change the state of the board."); 
+      }
+      else
+      {
+        console.log("Please wait for your turn!");
       }
   };
   
@@ -78,6 +85,12 @@ function App()
             newBoard[data.boxIndex] = "O";
             setBoard(newBoard);
           }
+          
+          if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
+          {
+            setTurn(true);
+          }
+          
         });
         
         socket.on('user-type-granted', (data) =>
@@ -85,6 +98,10 @@ function App()
           userType = data.userInfo.uType;
           bval = data.userInfo.bval;
           setUserTypes(data.client_info);
+          if(userTypes[userName] === "Player1")
+          {
+            setTurn(true);
+          }
         });  
       }, [board, userTypes]); 
       

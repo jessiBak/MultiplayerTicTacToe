@@ -57,11 +57,6 @@ def on_l_success(data):
     print("client_types: \n" + str(client_types))
     socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
     socketio.emit('new-user-notice', data, broadcast=True, include_self=False)
- 
-@socketio.on('user_type_query')
-def on_user_query(data):
-    print("user_query data: " + data)
-    socketio.emit('user_type_result', {'result': client_types[data]})
 
 socketio.run(
     app,
