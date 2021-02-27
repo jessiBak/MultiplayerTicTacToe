@@ -9,6 +9,7 @@
   grid-template-rows: repeat(3, 1fr); /* Total vertical space broken into 3 rows */
   margin: auto;
   padding: 30px;
+  postion: relative
 }
 
 .box 
@@ -18,4 +19,5 @@
   text-align: center;
   font-family: "Press Start 2P";
   font-size: 24px;
+  background-color: white;
 }

@@ -13,25 +13,46 @@ socketio = SocketIO(
     json=json,
     manage_session=False
 )
-clients = []
 
-@app.route('/', defaults={"filename": "index.html"})
+clients = {}
+num_Of_Clients = 0
+
+@app.route('/', defaults={"filename": "index.html"}, methods=['POST'])
 @app.route('/<path:filename>')
 def index(filename):
     return send_from_directory('./build', filename)
 
 @socketio.on('connect')
-def on_connect(client):
+def on_connect():
     print('User connected!')
+    global num_Of_Clients
+    uType = ""
+    num_Of_Clients += 1
+    if(num_Of_Clients == 1):
+         uType = "Player_1"
+    elif(num_Of_Clients == 2):
+         uType = "Player_2"
+    else:
+         uType = "Spectator_" + str(num_Of_Clients - 2)
+    uInfo = {'uType': uType, 'client_num': num_Of_Clients}
+    socketio.emit('user-type-granted', uInfo, broadcast=False, include_self=True)
 
 @socketio.on('disconnect')
-def on_disconnect(client):
+def on_disconnect():
     print('User disconnected!')
     
 @socketio.on('box-clicked')
 def on_box_clicked(data):
     print(str(data))
     socketio.emit('box-clicked',  data, broadcast=True, include_self=False)
+
+#map client usernames to ID numbers
+@socketio.on('login_success')
+def on_l_success(data):
+    print(str(data))
+    clients[data.id] = data.userName;
+    socketio.emit('new-user-notice', {'new_user': data.userName}, broadcast=True, include_self=False)
+    
 
 socketio.run(
     app,
