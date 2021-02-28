@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {Board, Box} from './Board.js';
-import {Login} from './LoginScreen.js';
+import {Login} from './LoginScreen.js';          
 import {GameOver} from './GameOver.js';
 import './Board.css'
 import './LoginScreen.css'
@@ -108,7 +108,7 @@ function App()
         }
       }
       //checking to see if there's a winner yet (or if it's a tie)
-      let winner_status = calculateWinner(newBoard);
+      let winner_status = calculateWinner(newBoard); //alert instead of log
       if(winner_status)
       {
         if(winner_status === "X")
@@ -124,7 +124,8 @@ function App()
       }
       else
       {
-        if(!board.some(element => element === null))//check to see if the board is full. if it is and there's no winner, the game's a tie
+        console.log("Board: " + String(board))
+        if(newBoard.every(element => element != null))//check to see if the board is full. if it is and there's no winner, the game's a tie
         {
           socket.emit('game_over', {winner: "Tie", username: "It\'s a tie! No one"});
           //setGameOver(true);

@@ -1,5 +1,6 @@
 # Project 2: Multiplayer Tic-Tac-Toe (Milestone 2)
 
+
 ## Requirements
 1. `npm install`
 2. `pip install -r requirements.txt`
@@ -38,5 +39,5 @@
 * I will attempt to fix this by looking over the events emitted when a winner is calculated (game-results and game-over). I would also need to figure out how to check if events that are being emitted are received by the clients/server. 
 - [x] Clicking the restart button doesn't do anything
 * I will attempt to fix this by going over the events that reset the values of the board. 
-- [ ] When the game results in a tie, no game results are displayed and neither player is allowed to change the values of the board.
+- [x] When the game results in a tie, no game results are displayed and neither player is allowed to change the values of the board.
 * I will have to look into the parts of code that deal with determining if the game result is a tie, and how to proceed when the board is full but there is no winner.
