@@ -57,6 +57,14 @@ def on_l_success(data):
     print("client_types: \n" + str(client_types))
     socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
     socketio.emit('new-user-notice', data, broadcast=True, include_self=False)
+    
+@socketio.on('game_over')
+def on_game_over(data):
+    socketio.emit('game_results', data, broadcast=True, include_self=True)
+    
+@socketio.on('game_reset_requested')
+def on_game_reset():
+    socketio.emit('game_reset', broadcast=True, include_self=True)
 
 socketio.run(
     app,
