@@ -36,5 +36,7 @@
 * I will attempt to fix this by emitting events that help to create a 'Game Ended' state. Clients that receive this event would be prevented from making any changes to the board, and would see the game's results on their screens without needing to open the console.
 - [x] When isGameOver (state determining whether the game is finished) is true, the GameOver component and the Restart button don't appear.
 * I will attempt to fix this by looking over the events emitted when a winner is calculated (game-results and game-over). I would also need to figure out how to check if events that are being emitted are received by the clients/server. 
-- [ ] Clicking the restart button doesn't do anything
+- [x] Clicking the restart button doesn't do anything
 * I will attempt to fix this by going over the events that reset the values of the board. 
+- [ ] When the game results in a tie, no game results are displayed and neither player is allowed to change the values of the board.
+* I will have to look into the parts of code that deal with determining if the game result is a tie, and how to proceed when the board is full but there is no winner.
