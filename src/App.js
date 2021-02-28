@@ -36,7 +36,7 @@ function App()
     setList(listCopy);
     });
 
-  
+
         
     function calculateWinner(squares) 
     {
@@ -201,23 +201,27 @@ function App()
           setConfetti(confetti);
         });
         
-        
-      }, [board, userTypes, isGameOver, isTurn]); 
-      
-      socket.on('game_reset_requested', (data) =>
+         socket.on('game_reset', () =>
         {
-          setBoard(data.resetBoard);
+          console.log("The game will now reset");
+          setBoard(Array(9).fill(null));
           setGameOver(false);
           setResults((<div></div>));
-          if(userType[userName] === "Player1")
+          setConfetti(<div></div>);
+          if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
           {
-            setTurn(true);
+            setTurn(!isTurn);
           }
           else
           {
             setTurn(false);
           }
-        });
+          console.log("Game has been reset");
+        }); 
+        
+      }, [board, userTypes, isGameOver, isTurn]); 
+      
+      
   
   if(isLogged)
   {
