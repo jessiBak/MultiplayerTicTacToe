@@ -9,7 +9,7 @@
   grid-template-rows: repeat(3, 1fr); /* Total vertical space broken into 3 rows */
   margin: auto;
   padding: 30px;
-  postion: relative
+  postion: relative;
 }
 
 .box 

@@ -13,9 +13,10 @@
 3. Preview web page in browser '/'
 
 ## Deploying to Heroku
-1. Create a Heroku app: `heroku create --buildpack heroku/python`
+1. Ensure that there are no heroku apps in the project directory (to check: `git remote -v` to remove: `git remote rm heroku`)
+2. Create a Heroku app: `heroku create --buildpack heroku/python`
 2. Add nodejs buildpack: `heroku buildpacks:add --index 1 heroku/nodejs`
-3. Push to Heroku: `git push heroku milestone_1`
+3. Push to Heroku: `git push heroku milestone_1:main`
 
 ## Technical Issues
 1. When setting the username for each client and mapping that username to a user type (Player1, Player2, or Spectator), when a new user logged in, the mappings of both clients would swap with each button click.

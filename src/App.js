@@ -5,6 +5,7 @@ import {Login} from './LoginScreen.js';
 import {GameOver} from './GameOver.js';
 import './Board.css'
 import './LoginScreen.css'
+import './GameOver.css'
 import {useState, useRef, useEffect} from 'react';
 import io from 'socket.io-client';
 
@@ -21,6 +22,7 @@ function App()
   const [isGameOver, setGameOver] = useState(false);
   const [results, setResults] = useState((<div></div>));
   const [userList, setList] = useState([]);
+  const [confetti_image, setConfetti] = useState(<div></div>);
   
 //These are provided by the server upon connect
    let userType;
@@ -195,6 +197,8 @@ function App()
             </div>
           );
           setResults(r);
+          let confetti = ( <img src="https://i.gifer.com/5Q10.gif"/>);    
+          setConfetti(confetti);
         });
         
         
@@ -214,12 +218,13 @@ function App()
             setTurn(false);
           }
         });
-      
+  
   if(isLogged)
   {
     let x = 0;
     return (
-    <div>
+    <div class="main_div">
+      {confetti_image}
       <Board board={board} handleClick={boxClick}/>
       <div>
           <h3>Other users:</h3>
@@ -231,12 +236,6 @@ function App()
     </div>
     );
   }
-  else if(isGameOver)
-  {
-    console.log('Game results displaying (?)');
-    return {results};
-  }
-
   return (
     <div>
       <Login iRef={inputRef}login_click={loginClick}/>
