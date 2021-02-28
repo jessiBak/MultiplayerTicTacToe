@@ -1,4 +1,4 @@
-# Project 2: Multiplayer Tic-Tac-Toe (Milestone 1)
+# Project 2: Multiplayer Tic-Tac-Toe (Milestone 2)
 
 ## Requirements
 1. `npm install`
