@@ -17,7 +17,7 @@
 2. Add nodejs buildpack: `heroku buildpacks:add --index 1 heroku/nodejs`
 3. Push to Heroku: `git push heroku milestone_1`
 
-##Technical Issues
+## Technical Issues
 1. When setting the username for each client and mapping that username to a user type (Player1, Player2, or Spectator), when a new user logged in, the mappings of both clients would swap with each button click.
 * I looked up some examples of using useEffect through the React documentation and by rewatching lectures/demos.
 * I was able to fix this by moving the user type granted event within the useEffect, and I also pushed the username-usertype mappings from the server to each client so the mapping would be easier to reference.
@@ -30,7 +30,7 @@
 * I noticed that the event for emitting a winner would still run after the checks for game completion, clicking a filled box, etc, which meant that a winner would still be calcuated after the game ended.
 * I was able to fix this by returning after each of the conditions where clicking a box shouldn't do anything so the rest of the code (that included the calculateWinner function) wouldn't run in the box-click method.
 
-##Known Issues
+## Known Issues
 - [x] When a winner is calculated, or if the board is filled and there's a tie, the game doesn't officially stop. Instead a message gets logged to the console indicating the game's results 
 * I will attempt to fix this by emitting events that help to create a 'Game Ended' state. Clients that receive this event would be prevented from making any changes to the board, and would see the game's results on their screens without needing to open the console.
 - [x] When isGameOver (state determining whether the game is finished) is true, the GameOver component and the Restart button don't appear.
