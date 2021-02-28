@@ -92,14 +92,17 @@ function App()
         if(board[index] != null)
         {
           console.log("This box has already been filled!");
+          return 0;
         }
         else if(isGameOver)
         {
           console.log("The game has ended!");
+          return 0;
         }
         else
         {
           console.log("Please wait for your turn!");
+          return 0;
         }
       }
       //checking to see if there's a winner yet (or if it's a tie)
@@ -197,9 +200,9 @@ function App()
         
       }, [board, userTypes, isGameOver, isTurn]); 
       
-      socket.on('game_reset_requested', () =>
+      socket.on('game_reset_requested', (data) =>
         {
-          setBoard(Array(9).fill(null));
+          setBoard(data.resetBoard);
           setGameOver(false);
           setResults((<div></div>));
           if(userType[userName] === "Player1")

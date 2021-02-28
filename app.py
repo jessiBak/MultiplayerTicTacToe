@@ -64,7 +64,8 @@ def on_game_over(data):
     
 @socketio.on('game_reset_requested')
 def on_game_reset():
-    socketio.emit('game_reset', broadcast=True, include_self=True)
+    data = {'resetBoard': []}
+    socketio.emit('game_reset', data, broadcast=True, include_self=True)
 
 socketio.run(
     app,
