@@ -13,14 +13,20 @@ export function GameOver(props)
     }
     else if(props.winner === "Player2")
     {
+      return(
     <div>
       <h2>The winner is...{props.username}!</h2>
+      <button type='button' onClick={props.reset}>Restart</button>
      </div>
+     );
     }
     else
     {
+      return(
     <div>
       <h2>It's a tie!!</h2>
+      <button type='button' onClick={props.reset}>Restart</button>
      </div>
+     );
     }
 }

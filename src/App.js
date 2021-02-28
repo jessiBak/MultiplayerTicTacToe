@@ -18,7 +18,7 @@ function App()
   const [userTypes, setUserTypes] = useState({});
   const inputRef = useRef(null);
   const [isTurn, setTurn] = useState(false);
-  const [isGameOver, setGame] = useState(false);
+  const [isGameOver, setGameOver] = useState(false);
   const [results, setResults] = useState((<div></div>));
   const [userList, setList] = useState([]);
   
@@ -35,6 +35,7 @@ function App()
     });
 
   
+        
     function calculateWinner(squares) 
     {
       const lines = 
@@ -66,7 +67,7 @@ function App()
       console.log(userName + " clicked a box");
       let boxdata;
       let newBoard = [...board];
-      if(userTypes[userName] === "Player1" && isTurn && board[index] === null)
+      if(userTypes[userName] === "Player1" && isTurn && board[index] === null && !isGameOver)
       {
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "X";
@@ -74,7 +75,7 @@ function App()
         socket.emit('box-clicked', { boxIndex: index, playerType: userTypes[userName], uname: userName});
         setTurn(false);
       }
-      else if(userTypes[userName] === "Player2" && isTurn && board[index] === null)
+      else if(userTypes[userName] === "Player2" && isTurn && board[index] === null && !isGameOver)
       {
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "O";
@@ -92,6 +93,10 @@ function App()
         {
           console.log("This box has already been filled!");
         }
+        else if(isGameOver)
+        {
+          console.log("The game has ended!");
+        }
         else
         {
           console.log("Please wait for your turn!");
@@ -104,20 +109,20 @@ function App()
         if(winner_status === "X")
         {
           socket.emit('game_over', {winner: "Player1", username: userName});
-          setGame(true);
+          //setGameOver(true);
         }
         else if(winner_status === "O")
         {
           socket.emit('game_over', {winner: "Player2", username: userName});
-          setGame(true);
+          //setGameOver(true);
         }
       }
       else
       {
-        if(board.every(element => element !== null))
+        if(!board.some(element => element === null))//check to see if the board is full. if it is and there's no winner, the game's a tie
         {
-          socket.emit('game_over', {winner: "Tie", username: "It\'s a tie! No one "});
-          setGame(true);
+          socket.emit('game_over', {winner: "Tie", username: "It\'s a tie! No one"});
+          //setGameOver(true);
         }
         console.log("No winner yet");
       }
@@ -138,6 +143,7 @@ function App()
   const reset = () =>
   {
     socket.emit('game_reset_requested');
+    console.log('Game reset requested...');
   }
   
   useEffect(() => 
@@ -176,22 +182,25 @@ function App()
         
         socket.on('game_results', (data) =>
         {
-          console.log(data.username + ' wins!');
+          let i = 0;
           setTurn(false);
-          setGame(true);
+          setGameOver(true);
+          console.log(data.username + ' wins!');
           const r = (
             <div>
-              <Board board={board} handleClick={boxClick}/>
               <GameOver winner={data.winner} username={data.username} reset={reset}/>
             </div>
           );
           setResults(r);
-        })
+        });
         
-        socket.on('game_reset_requested', () =>
+        
+      }, [board, userTypes, isGameOver, isTurn]); 
+      
+      socket.on('game_reset_requested', () =>
         {
           setBoard(Array(9).fill(null));
-          setGame(false);
+          setGameOver(false);
           setResults((<div></div>));
           if(userType[userName] === "Player1")
           {
@@ -201,22 +210,21 @@ function App()
           {
             setTurn(false);
           }
-          
-          
-        })
-      }, [board, userTypes, isGameOver]); 
+        });
       
   if(isLogged)
   {
+    let x = 0;
     return (
     <div>
       <Board board={board} handleClick={boxClick}/>
       <div>
           <h3>Other users:</h3>
           {userList.map((item) => (
-            <li>{item}</li>
+            <li key={x++}> {item} </li>
           ))}
-        </div>
+      </div>
+      {results}
     </div>
     );
   }
