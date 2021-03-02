@@ -32,6 +32,10 @@
 * I noticed that the event for emitting a winner would still run after the checks for game completion, clicking a filled box, etc, which meant that a winner would still be calcuated after the game ended.
 * I was able to fix this by returning after each of the conditions where clicking a box shouldn't do anything so the rest of the code (that included the calculateWinner function) wouldn't run in the box-click method.
 
+4. Whenever a new user logged in, only the first person to log in would see a complete list of the users.
+* I noticed that my new-user-notice event had include_self set to False. This meant that everyone besides the user would receive the new user notice.
+* Setting include_self to True resolved the issue.
+
 ## Known Issues
 - [x] When a winner is calculated, or if the board is filled and there's a tie, the game doesn't officially stop. Instead a message gets logged to the console indicating the game's results 
 * I will attempt to fix this by emitting events that help to create a 'Game Ended' state. Clients that receive this event would be prevented from making any changes to the board, and would see the game's results on their screens without needing to open the console.

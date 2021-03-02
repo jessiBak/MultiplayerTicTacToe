@@ -30,13 +30,21 @@ function App()
 
   socket.on('new-user-notice', (data) =>
   {
-    console.log("New user: " + data.username);
     const listCopy = [...userList];
-    listCopy.push(data.username);
+    if(data.username === userName)
+    {
+      console.log("New user: " + data.username + ": " + userTypes[userName] + " (That\'s you!");
+      listCopy.push(data.username +": " + userTypes[userName] + " (That\'s you!)");
+    }
+    else
+    {
+      console.log("New user: " + data.username);
+      listCopy.push(data.username +": " + userTypes[userName]);
+    }
+    
     setList(listCopy);
     });
-
-
+    
         
     function calculateWinner(squares) 
     {
@@ -87,23 +95,23 @@ function App()
       } 
       else if(userTypes[userName].includes("Spectator"))
       {
-        console.log("Spectators cannot change the state of the board."); 
+        alert("Spectators cannot change the state of the board."); 
       }
       else
       {
         if(board[index] != null)
         {
-          console.log("This box has already been filled!");
+          alert("This box has already been filled!");
           return 0;
         }
         else if(isGameOver)
         {
-          console.log("The game has ended!");
+          alert("The game has ended!");
           return 0;
         }
         else
         {
-          console.log("Please wait for your turn!");
+          alert("Please wait for your turn!");
           return 0;
         }
       }
@@ -233,7 +241,7 @@ function App()
       {confetti_image}
       <Board board={board} handleClick={boxClick}/>
       <div>
-          <h3>Other users:</h3>
+          <h3>Users:</h3>
           {userList.map((item) => (
             <li key={x++}> {item} </li>
           ))}
