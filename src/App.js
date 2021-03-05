@@ -33,8 +33,8 @@ function App()
     const listCopy = [...userList];
     if(data.username === userName)
     {
-      console.log("New user: " + data.username + ": " + userTypes[userName] + " (That\'s you!");
-      listCopy.push(data.username +": " + userTypes[userName] + " (That\'s you!)");
+      console.log("New user: " + data.username + ": " + userTypes[userName] + " (That's you!");
+      listCopy.push(data.username +": " + userTypes[userName] + " (That's you!)");
     }
     else
     {
@@ -121,12 +121,14 @@ function App()
       {
         if(winner_status === "X")
         {
-          socket.emit('game_over', {winner: "Player1", username: userName});
+          let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player2");
+          socket.emit('game_over', {winner: userName, loser: loser});
           //setGameOver(true);
         }
         else if(winner_status === "O")
         {
-          socket.emit('game_over', {winner: "Player2", username: userName});
+          let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player1");
+          socket.emit('game_over', {winner: userName, loser: loser});
           //setGameOver(true);
         }
       }
@@ -135,7 +137,7 @@ function App()
         console.log("Board: " + String(board))
         if(newBoard.every(element => element != null))//check to see if the board is full. if it is and there's no winner, the game's a tie
         {
-          socket.emit('game_over', {winner: "Tie", username: "It\'s a tie! No one"});
+          socket.emit('game_over', {winner: "", username: "It's a tie! No one"}); 
           //setGameOver(true);
         }
         console.log("No winner yet");
@@ -199,15 +201,15 @@ function App()
           let i = 0;
           setTurn(false);
           setGameOver(true);
-          console.log(data.username + ' wins!');
+          console.log(data.winner + ' wins!');
           const r = (
             <div>
-              <GameOver winner={data.winner} username={data.username} reset={reset}/>
+              <GameOver winner={data.winner} username={data.winner} reset={reset}/>
             </div>
           );
           setResults(r);
           //let confetti = ( <img src="https://i.gifer.com/5Q10.gif"/>);    
-          let confetti = (<img src="https://i.gifer.com/XfQB.gif"/>);
+          let confetti = (<img src="https://i.gifer.com/XfQB.gif" alt="confetti"/>);
           setConfetti(confetti);
         });
         
