@@ -69,7 +69,7 @@ def on_l_success(data):
          uType = "Player2"
          bValue = "O"
     else:
-         uType = "Spectator" + str(num_Of_Clients - 2)
+         uType = "Spectator"
          bValue = ""
     uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
     client_types[data['username']] = uType
