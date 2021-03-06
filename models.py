@@ -7,3 +7,11 @@ class Player(db.Model):
 
     def __repr__(self):
         return f'<Player {self.username}> | Total score: {self.score}'
+    
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'score': self.score
+        }

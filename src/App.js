@@ -3,6 +3,7 @@ import './App.css';
 import {Board, Box} from './Board.js';
 import {Login} from './LoginScreen.js';          
 import {GameOver} from './GameOver.js';
+import {LeaderBoard} from './LeaderBoard.js';
 import './Board.css'
 import './LoginScreen.css'
 import './GameOver.css'
@@ -23,29 +24,13 @@ function App()
   const [results, setResults] = useState((<div></div>));
   const [userList, setList] = useState([]);
   const [confetti_image, setConfetti] = useState(<div></div>);
-  
+  const [leaderboardInfo, setLeaderBoardInfo] = useState([]);
+  let leaderboard_render = (<div></div>);
 //These are provided by the server upon connect
    let userType;
    let bval;
 
-  socket.on('new-user-notice', (data) =>
-  {
-    const listCopy = [...userList];
-    if(data.username === userName)
-    {
-      console.log("New user: " + data.username + ": " + userTypes[userName] + " (That's you!");
-      listCopy.push(data.username +": " + userTypes[userName] + " (That's you!)");
-    }
-    else
-    {
-      console.log("New user: " + data.username);
-      listCopy.push(data.username +": " + userTypes[userName]);
-    }
-    
-    setList(listCopy);
-    });
-    
-        
+ 
     function calculateWinner(squares) 
     {
       const lines = 
@@ -196,6 +181,23 @@ function App()
           }
         });  
         
+        socket.on('new-user-notice', (data) =>
+        {
+          const listCopy = [...userList];
+          if(data.username === userName)
+          {
+            console.log("New user: " + data.username + ": " + userTypes[userName] + " (That's you!");
+            listCopy.push(data.username +": " + userTypes[userName] + " (That's you!)");
+          }
+          else
+          {
+            console.log("New user: " + data.username);
+            listCopy.push(data.username +": " + userTypes[userName]);
+          }
+    
+          setList(listCopy);
+        });
+        
         socket.on('game_results', (data) =>
         {
           let i = 0;
@@ -231,24 +233,37 @@ function App()
           console.log("Game has been reset");
         }); 
         
-      }, [board, userTypes, isGameOver, isTurn]); 
+        socket.on('leaderboard_info_update', (data) =>
+        {
+          setLeaderBoardInfo(data)
+          console.log("Leader board data: " + String(data));
+        });
+        
+      }, [board, userTypes, isGameOver, isTurn, leaderboardInfo, userList]); 
       
       
   
   if(isLogged)
   {
     let x = 0;
+    leaderboard_render = <LeaderBoard info={leaderboardInfo}/>;
     return (
-    <div class="main_div">
+    <div className="main_div">
       {confetti_image}
       <Board board={board} handleClick={boxClick}/>
-      <div>
+      <div className='user_list'>
           <h3>Users:</h3>
           {userList.map((item) => (
             <li key={x++}> {item} </li>
           ))}
       </div>
+      
+      <div className='leaderboard'>
+        {leaderboard_render}
+      </div>
       {results}
+      
+      
     </div>
     );
   }

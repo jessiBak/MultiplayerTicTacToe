@@ -27,8 +27,11 @@ socketio = SocketIO(
 )
 
 client_types = {}
-
+leaderboard_json = []
 num_Of_Clients = 0
+
+def rows_2_lst(query):
+    return [row.serialize for row in query.all()]
 
 @app.route('/', defaults={"filename": "index.html"})
 @app.route('/<path:filename>')
@@ -51,7 +54,13 @@ def on_box_clicked(data):
 #map client usernames to ID numbers
 @socketio.on('login_success')
 def on_l_success(data):
-    print("login_success data: " + str(data))
+    print('leaderboard_result: ')
+    leaderboard_result = models.Player.query.order_by(models.Player.score.desc()).limit(10)
+    leaderboard_json = rows_2_lst(leaderboard_result)
+        
+    print("leaderboard: " + str(leaderboard_json))
+    #print(leaderboard_result)
+    #print("login_success data: " + str(data))
     player_exists = models.Player.query.filter_by(username=data['username']).first()
     if not player_exists:
         new_player = models.Player(username=data['username'], score=100)
@@ -61,14 +70,14 @@ def on_l_success(data):
     global num_Of_Clients
     uType = ""
     bValue = ""
-    num_Of_Clients+=1
+    num_Of_Clients += 1
     if(num_Of_Clients == 1):
          uType = "Player1"
          bValue = "X"
     elif(num_Of_Clients == 2):
          uType = "Player2"
          bValue = "O"
-    else:
+    else: 
          uType = "Spectator"
          bValue = ""
     uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
@@ -76,6 +85,7 @@ def on_l_success(data):
     print("client_types: \n" + str(client_types))
     socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
     socketio.emit('new-user-notice', data, broadcast=True, include_self=True)
+    socketio.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
     
 @socketio.on('game_over')
 def on_game_over(data):
