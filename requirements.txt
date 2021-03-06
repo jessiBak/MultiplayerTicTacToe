@@ -2,3 +2,4 @@ Flask
 Flask-SocketIO
 Flask-Cors
 Flask-SQLAlchemy
+python-dotenv
