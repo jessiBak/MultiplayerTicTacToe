@@ -42,3 +42,5 @@ player_exists = models.Player.query.filter_by(username=data['username'])
     * I will attempt to fix this by re-evaluating my new-user-notice event
 - [ ] If a player logs in first, then their user list would declare everyone's user type as "Player1", even though other users correctly have Player2/Spectator behaviors
     * I will attempt to fix this by going over the methods I used to display the user list and assign user types 
+- [ ] If the restart button is clicked, and a new game is started, nothing happens when a player wins or if the board is filled and it's a tie
+    * I will attempt to fix this by going over the reset, box-clicked and calculateWinner functions
