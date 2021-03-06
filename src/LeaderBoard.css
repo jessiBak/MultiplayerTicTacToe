@@ -1,11 +1,24 @@
 table
 {
     border-collapse: collapse;
+    background-color: #f6fdfc;
+    border-radius: 7px;
+}
+
+th, td
+{
+    border: 3px solid #9999ff;
+    
 }
 
 th
 {
-    border: 3px solid #9999ff;
+    background-color: #e9d4e9;
+}
+
+td
+{
+    background-color: #f6edf6;
 }
 
 /*

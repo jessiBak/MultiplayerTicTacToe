@@ -7,18 +7,18 @@ function createTable(data, usr)
         if(item.username === usr)
         {
             return(
-                <tr style={{color: '#d0a1ff'}}>
-                    <th>{item.username}</th>
-                    <th>{item.score}</th>
-                    <th>{index + 1}</th>
+                <tr style={{color: '#b76eff'}}>
+                    <td>{item.username}</td>
+                    <td>{item.score}</td>
+                    <td>{index + 1}</td>
                 </tr>
             )
         }
         return(
             <tr>
-                <th>{item.username}</th>
-                <th>{item.score}</th>
-                <th>{index + 1}</th>
+                <td>{item.username}</td>
+                <td>{item.score}</td>
+                <td>{index + 1}</td>
             </tr>
         )
     });
