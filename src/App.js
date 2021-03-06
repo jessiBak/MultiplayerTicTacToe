@@ -246,7 +246,7 @@ function App()
   if(isLogged)
   {
     let x = 0;
-    leaderboard_render = <LeaderBoard info={leaderboardInfo}/>;
+    leaderboard_render = <LeaderBoard info={leaderboardInfo} username={userName}/>;
     return (
     <div className="main_div">
       {confetti_image}

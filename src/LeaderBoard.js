@@ -1,9 +1,18 @@
 import React from 'react';
 
-function createTable(data)
+function createTable(data, usr)
 {
     const newTable = data.map((item) =>
     {
+        if(item.username === usr)
+        {
+            return(
+                <tr style={{color: '#d0a1ff'}}>
+                    <th>{item.username}</th>
+                    <th>{item.score}</th>
+                </tr>
+            )
+        }
         return(
             <tr>
                 <th>{item.username}</th>
@@ -25,7 +34,7 @@ export function LeaderBoard(props)
                 <th>Username</th>
                 <th>Score</th>
             </tr>
-            {createTable(props.info)}
+            {createTable(props.info, props.username)}
             </table>
         )
  }
