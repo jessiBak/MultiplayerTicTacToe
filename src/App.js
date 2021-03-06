@@ -204,7 +204,7 @@ function App()
           setGameOver(true);
           console.log(data.winner + ' wins!');
           const r = (
-            <div>
+            <div className="child results">
               <GameOver winner={data.winner} username={data.winner} reset={reset}/>
             </div>
           );
@@ -252,17 +252,17 @@ function App()
     }
     
     return (
-    <div className="main_div">
+    <div className="container main_div">
       {confetti_image}
       <Board board={board} handleClick={boxClick}/>
-      <div className='user_list'>
+      <div className='child user_list'>
           <h3>Users:</h3>
           {userList.map((item) => (
             <li key={x++}> {item} </li>
           ))}
       </div>
+      <div className='child leaderboard'>
       <button type='button' onClick={toggleLeaderBoard} class="leaderboard_btn">Show/Hide Leaderboard </button>
-      <div className='leaderboard'>
         {leaderboard_render}
       </div>
       {results}

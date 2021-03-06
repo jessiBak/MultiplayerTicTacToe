@@ -41,3 +41,42 @@ body
 {
   background-color: #cce6ff;
 }
+
+.container
+{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.child {
+  flex: 0 32%;
+  height: 100px;
+  margin-bottom: 2%; /* (100-32*3)/2 */
+}
+
+
+.child:nth-child(4n) 
+{
+  width: 100%;
+}
+
+.board
+{
+  order: 2;
+}
+
+.user_list
+{
+  order: 1;
+}
+
+.leaderboard
+{
+  order: 3;
+}
+
+.results
+{
+  order: 4;
+}
