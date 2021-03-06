@@ -7,6 +7,7 @@ import {LeaderBoard} from './LeaderBoard.js';
 import './Board.css'
 import './LoginScreen.css'
 import './GameOver.css'
+import './LeaderBoard.css'
 import {useState, useRef, useEffect} from 'react';
 import io from 'socket.io-client';
 
@@ -129,8 +130,6 @@ function App()
         console.log("No winner yet");
       }
   };
-  
-
   
   function toggleLeaderBoard() 
   {

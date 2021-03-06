@@ -2,7 +2,7 @@ import React from 'react';
 
 function createTable(data, usr)
 {
-    const newTable = data.map((item) =>
+    const newTable = data.map((item, index) =>
     {
         if(item.username === usr)
         {
@@ -10,6 +10,7 @@ function createTable(data, usr)
                 <tr style={{color: '#d0a1ff'}}>
                     <th>{item.username}</th>
                     <th>{item.score}</th>
+                    <th>{index + 1}</th>
                 </tr>
             )
         }
@@ -17,6 +18,7 @@ function createTable(data, usr)
             <tr>
                 <th>{item.username}</th>
                 <th>{item.score}</th>
+                <th>{index + 1}</th>
             </tr>
         )
     });
@@ -34,6 +36,7 @@ export function LeaderBoard(props)
                 <tr>
                     <th>Username</th>
                     <th>Score</th>
+                    <th>Rank</th>
                 </tr>
                 {createTable(props.info, props.username)}
                 </table>
