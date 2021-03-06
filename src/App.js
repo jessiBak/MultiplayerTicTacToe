@@ -245,7 +245,7 @@ function App()
           alert("Game has been reset");
         }); 
         
-        socket.on('leaderboard_info_update', (data) =>
+        socket.on('leaderboard_info_update', (data) => 
         {
           setLeaderBoardInfo(data)
         });
