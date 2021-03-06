@@ -19,6 +19,7 @@ function App()
   const [isLogged, setLogin] = useState(false);
   const [userName, setUserName] = useState(null);
   const [userTypes, setUserTypes] = useState({});
+  const [type, setType] = useState("");
   const inputRef = useRef(null);
   const [isTurn, setTurn] = useState(false);
   const [isGameOver, setGameOver] = useState(false);
@@ -165,6 +166,10 @@ function App()
           if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
           {
             setTurn(true);
+            if(!isGameOver)
+            {
+              alert("It's your turn!");
+            }
           }
           
         });
@@ -172,28 +177,31 @@ function App()
         socket.on('user-type-granted', (data) =>
         {
           userType = data.userInfo.uType;
+          //console.log("data.userInfo.uType: " + data.userInfo.uType);
           bval = data.userInfo.bval;
           setUserTypes(data.client_info);
+          console.log("data.client_info: ", data.client_info);
+          setType(data.userInfo.uType);
+          //console.log("data.client_info[userName]: " + data.client_info[userName]);
           if(userTypes[userName] === "Player1")
           {
             setTurn(true);
+            alert("It's your turn!");
           }
         });  
-        
+
         socket.on('new-user-notice', (data) =>
         {
+          console.log("New user: " + data.username);
           const listCopy = [...userList];
           if(data.username === userName)
           {
-            console.log("New user: " + data.username + ": " + userTypes[userName] + " (That's you!");
-            listCopy.push(data.username +": " + userTypes[userName] + " (That's you!)");
+            listCopy.push(data.username + ": " + userTypes[data.username] + " (That's you!)");
           }
           else
           {
-            console.log("New user: " + data.username);
-            listCopy.push(data.username +": " + userTypes[userName]);
+            listCopy.push(data.username);
           }
-    
           setList(listCopy);
         });
         
@@ -216,7 +224,7 @@ function App()
         
          socket.on('game_reset', () =>
         {
-          console.log("The game will now reset");
+          alert("The game will now reset");
           setBoard(Array(9).fill(null));
           setGameOver(false);
           setResults((<div></div>));
@@ -224,21 +232,25 @@ function App()
           if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
           {
             setTurn(!isTurn);
+            
+            if(isTurn && !isGameOver)
+            {
+              alert("It's your turn!");
+            }
           }
           else
           {
             setTurn(false);
           }
-          console.log("Game has been reset");
+          alert("Game has been reset");
         }); 
         
         socket.on('leaderboard_info_update', (data) =>
         {
           setLeaderBoardInfo(data)
-          console.log("Leader board data: " + String(data));
         });
         
-      }, [board, userTypes, isGameOver, isTurn, leaderboardInfo, userList]); 
+      }, [board, userTypes, isGameOver, isTurn, leaderboardInfo, userList,]); 
       
       
   

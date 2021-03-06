@@ -38,9 +38,11 @@ player_exists = models.Player.query.filter_by(username=data['username'])
     * I used the StackOverflow answer to create a function that converts the results of a query to a list of dictionaries and call that function when needed.
 
 ## Known Issues
-- [ ]  If a player logs in after other players, on their user list, each other player's user type would be listed as 'undefined'
+- [x]  If a player logs in after other players, on their user list, each other player's user type would be listed as 'undefined', additionally, each new user would only see their username and the usernames of anyone who logs in after them
     * I will attempt to fix this by re-evaluating my new-user-notice event
-- [ ] If a player logs in first, then their user list would declare everyone's user type as "Player1", even though other users correctly have Player2/Spectator behaviors
+- [x] If a player logs in first, then their user list would display everyone else's user type as undefined, even though other users correctly have Player2/Spectator behaviors
     * I will attempt to fix this by going over the methods I used to display the user list and assign user types 
 - [ ] If the restart button is clicked, and a new game is started, nothing happens when a player wins or if the board is filled and it's a tie
     * I will attempt to fix this by going over the reset, box-clicked and calculateWinner functions
+- [ ] When the restart button is clicked, users receive multiple alerts saying that the game will be reset and that the game has been reset.
+    * I will attempt to fix this by going over all the events related to restarting the board.
