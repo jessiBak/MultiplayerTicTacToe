@@ -29,12 +29,14 @@ export function LeaderBoard(props)
 {
         
         return(
-            <table>
-            <tr>
-                <th>Username</th>
-                <th>Score</th>
-            </tr>
-            {createTable(props.info, props.username)}
-            </table>
+            <div>
+                <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+                {createTable(props.info, props.username)}
+                </table>
+            </div>
         )
  }

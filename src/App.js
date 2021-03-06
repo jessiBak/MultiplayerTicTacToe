@@ -25,6 +25,7 @@ function App()
   const [userList, setList] = useState([]);
   const [confetti_image, setConfetti] = useState(<div></div>);
   const [leaderboardInfo, setLeaderBoardInfo] = useState([]);
+  const [showLdrBoard, setShowLdrBoard] = useState(false);
   let leaderboard_render = (<div></div>);
 //These are provided by the server upon connect
    let userType;
@@ -67,7 +68,7 @@ function App()
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "X";
         setBoard(newBoard);
-        socket.emit('box-clicked', { boxIndex: index, playerType: userTypes[userName], uname: userName});
+        socket.emit('box-clicked', newBoard);
         setTurn(false);
       }
       else if(userTypes[userName] === "Player2" && isTurn && board[index] === null && !isGameOver)
@@ -75,7 +76,7 @@ function App()
         console.log(userName + " is " + userTypes[userName]); 
         newBoard[index] = "O";
         setBoard(newBoard);
-        socket.emit('box-clicked', { boxIndex: index,  playerType: userTypes[userName]});
+        socket.emit('box-clicked', newBoard);
         setTurn(false);
       } 
       else if(userTypes[userName].includes("Spectator"))
@@ -129,6 +130,16 @@ function App()
       }
   };
   
+
+  
+  function toggleLeaderBoard() 
+  {
+    setShowLdrBoard((prevShow) => 
+    {
+      return !prevShow;
+    });
+  }
+  
   
   const loginClick = () =>
   {
@@ -151,18 +162,7 @@ function App()
       {
         socket.on('box-clicked', (data) => 
         {
-          let newBoard = [...board];
-          if(data.playerType === "Player1") 
-          {
-            newBoard[data.boxIndex] = "X";
-            setBoard(newBoard);
-          }
-          else if(data.playerType === "Player2")
-          {
-            newBoard[data.boxIndex] = "O";
-            setBoard(newBoard);
-          }
-          
+          setBoard(data);
           if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
           {
             setTurn(true);
@@ -246,7 +246,12 @@ function App()
   if(isLogged)
   {
     let x = 0;
-    leaderboard_render = <LeaderBoard info={leaderboardInfo} username={userName}/>;
+    
+    if(showLdrBoard)
+    {
+      leaderboard_render = <LeaderBoard info={leaderboardInfo} username={userName} onClick={() => {toggleLeaderBoard();}}/>;
+    }
+    
     return (
     <div className="main_div">
       {confetti_image}
@@ -257,7 +262,7 @@ function App()
             <li key={x++}> {item} </li>
           ))}
       </div>
-      
+      <button type='button' onClick={toggleLeaderBoard} class="leaderboard_btn">Show/Hide Leaderboard </button>
       <div className='leaderboard'>
         {leaderboard_render}
       </div>
