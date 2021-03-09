@@ -62,24 +62,6 @@ def on_l_success(data):
         db.session.add(new_player)
         db.session.commit()
     
-    # global num_Of_Clients
-    # uType = ""
-    # bValue = ""
-    # num_Of_Clients += 1
-    # if(num_Of_Clients == 1):
-    #      uType = "Player1"
-    #      bValue = "X"
-    # elif(num_Of_Clients == 2):
-    #      uType = "Player2"
-    #      bValue = "O"
-    # else: 
-    #      uType = "Spectator"
-    #      bValue = ""
-    # uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
-    # client_types[data['username']] = uType
-    # print("client_types: \n" + str(client_types))
-    # socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
-    # socketio.emit('new-user-notice', data, broadcast=True, include_self=True)
     socketio.emit('user_list_update', {'username': data['username'], 'users_data': data['users_data']}, broadcast=True, include_self=True)
     socketio.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
     
@@ -89,11 +71,9 @@ def on_game_over(data):
     if data['winner'] != "":
         winner = models.Player.query.filter_by(username=data['winner']).first()
         winner.score = winner.score + 1
-        #db.session.merge(winner)
         db.session.commit()
         loser = models.Player.query.filter_by(username=data['loser']).first()
         loser.score = loser.score - 1
-        #db.session.merge(loser)
         db.session.commit()
         
     leaderboard_result = models.Player.query.order_by(models.Player.score.desc()).limit(10)
