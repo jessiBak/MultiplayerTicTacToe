@@ -160,7 +160,7 @@ function App()
   
   useEffect(() => 
       {
-        socket.on('box-clicked', (data) => 
+        socket.on('board_updated', (data) => 
         {
           setBoard(data);
           if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
@@ -187,6 +187,14 @@ function App()
           {
             setTurn(true);
             alert("It's your turn!");
+          }
+          else if(userTypes[userName] === "Player2")
+          {
+            alert("You're Player 2! Please wait for your turn.");
+          }
+          else if(userTypes[userName === "Spectator"])
+          {
+            alert("You are a Spectator. Enjoy watching the game!");  
           }
         });  
 

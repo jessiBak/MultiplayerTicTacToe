@@ -49,7 +49,7 @@ def on_disconnect():
 @socketio.on('box-clicked')
 def on_box_clicked(data):
     print(str(data))
-    socketio.emit('box-clicked',  data, broadcast=True, include_self=False)
+    socketio.emit('board_updated',  data, broadcast=True, include_self=False)
 
 #map client usernames to ID numbers
 @socketio.on('login_success')

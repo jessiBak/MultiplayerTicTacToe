@@ -23,7 +23,6 @@ function createTable(data, usr)
         )
     });
     
-    console.log(String(newTable));
     return newTable;
 }
 
