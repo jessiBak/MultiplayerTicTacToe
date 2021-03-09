@@ -126,22 +126,18 @@ function App()
         }
       }
       //checking to see if there's a winner yet (or if it's a tie)
-      let winner_status = calculateWinner(newBoard); //alert instead of log
+      let winner_status = calculateWinner(newBoard);
       if(winner_status)
       {
         if(winner_status === "X")
         {
-          //let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player2");
           let loser = userTypes["Player2"];
           socket.emit('game_over', {winner: userName, loser: loser});
-          //setGameOver(true);
         }
         else if(winner_status === "O")
         {
-          //let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player1");
           let loser = userTypes["Player1"];
           socket.emit('game_over', {winner: userName, loser: loser});
-          //setGameOver(true);
         }
       }
       else
@@ -150,7 +146,6 @@ function App()
         if(newBoard.every(element => element != null))//check to see if the board is full. if it is and there's no winner, the game's a tie
         {
           socket.emit('game_over', {winner: "", username: "It's a tie! No one"}); 
-          //setGameOver(true);
         }
         console.log("No winner yet");
       }
