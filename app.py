@@ -62,30 +62,27 @@ def on_l_success(data):
         db.session.add(new_player)
         db.session.commit()
     
-    global num_Of_Clients
-    uType = ""
-    bValue = ""
-    num_Of_Clients += 1
-    if(num_Of_Clients == 1):
-         uType = "Player1"
-         bValue = "X"
-    elif(num_Of_Clients == 2):
-         uType = "Player2"
-         bValue = "O"
-    else: 
-         uType = "Spectator"
-         bValue = ""
-    uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
-    client_types[data['username']] = uType
-    print("client_types: \n" + str(client_types))
-    socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
-    socketio.emit('new-user-notice', data, broadcast=True, include_self=True)
+    # global num_Of_Clients
+    # uType = ""
+    # bValue = ""
+    # num_Of_Clients += 1
+    # if(num_Of_Clients == 1):
+    #      uType = "Player1"
+    #      bValue = "X"
+    # elif(num_Of_Clients == 2):
+    #      uType = "Player2"
+    #      bValue = "O"
+    # else: 
+    #      uType = "Spectator"
+    #      bValue = ""
+    # uInfo = {'username': data['username'], 'uType': uType, 'bval': bValue }
+    # client_types[data['username']] = uType
+    # print("client_types: \n" + str(client_types))
+    # socketio.emit('user-type-granted', {'userInfo': uInfo, 'client_info': client_types}, broadcast=False, include_self=True)
+    # socketio.emit('new-user-notice', data, broadcast=True, include_self=True)
+    socketio.emit('user_list_update', {'username': data['username'], 'users_data': data['users_data']}, broadcast=True, include_self=True)
     socketio.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
     
-
-@socketio.on('user-list-update')
-def on_user_update(data):
-    socketio.emit('get-new-users', data, broadcast=True, include_self=False)
 
 @socketio.on('game_over')
 def on_game_over(data):

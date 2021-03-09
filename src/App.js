@@ -18,7 +18,7 @@ function App()
   const [board, setBoard] = useState(Array(9).fill(null)); //initially an empty array with 9 elements
   const [isLogged, setLogin] = useState(false);
   const [userName, setUserName] = useState(null);
-  const [userTypes, setUserTypes] = useState({});
+  const [userTypes, setUserTypes] = useState({"Player1": "", "Player2": "", "Spectators": []});
   const [type, setType] = useState("");
   const inputRef = useRef(null);
   const [isTurn, setTurn] = useState(false);
@@ -29,9 +29,7 @@ function App()
   const [leaderboardInfo, setLeaderBoardInfo] = useState([]);
   const [showLdrBoard, setShowLdrBoard] = useState(false);
   let leaderboard_render = (<div></div>);
-//These are provided by the server upon connect
-   let userType;
-   let bval;
+
 
  
     function calculateWinner(squares) 
@@ -59,29 +57,55 @@ function App()
       
       return null;
     }
+  
+  const loginClick = () =>
+  {
+    if(inputRef != null)
+    {
+      const uName = inputRef.current.value;
+      setUserName(uName);
+      let users = {...userTypes};
+      if(users["Player1"] === "")
+      {
+        users["Player1"] = uName;
+      }
+      else if(users["Player2"] === "")
+      {
+        users["Player2"] = uName;
+      }
+      else
+      {
+        users["Spectators"].push(uName);
+      }
+      setUserTypes(users);
+      setLogin(true);
+      socket.emit('login_success', {'username': uName, 'users_data': users}); 
+    }
+  }
       
   const boxClick = (index) =>
   {
       console.log(userName + " clicked a box");
       let boxdata;
       let newBoard = [...board];
-      if(userTypes[userName] === "Player1" && isTurn && board[index] === null && !isGameOver)
+      let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
+      if(userType === "Player1" && isTurn && board[index] === null && !isGameOver)
       {
-        console.log(userName + " is " + userTypes[userName]); 
+        console.log(userName + " is " + userType); 
         newBoard[index] = "X";
         setBoard(newBoard);
         socket.emit('box-clicked', newBoard);
         setTurn(false);
       }
-      else if(userTypes[userName] === "Player2" && isTurn && board[index] === null && !isGameOver)
+      else if(userType === "Player2" && isTurn && board[index] === null && !isGameOver)
       {
-        console.log(userName + " is " + userTypes[userName]); 
+        console.log(userName + " is " + userType); 
         newBoard[index] = "O";
         setBoard(newBoard);
         socket.emit('box-clicked', newBoard);
         setTurn(false);
       } 
-      else if(userTypes[userName].includes("Spectator"))
+      else if(userType === "Spectator")
       {
         alert("Spectators cannot change the state of the board."); 
       }
@@ -109,13 +133,15 @@ function App()
       {
         if(winner_status === "X")
         {
-          let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player2");
+          //let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player2");
+          let loser = userTypes["Player2"];
           socket.emit('game_over', {winner: userName, loser: loser});
           //setGameOver(true);
         }
         else if(winner_status === "O")
         {
-          let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player1");
+          //let loser =  Object.keys(userTypes).find(key => userTypes[key] === "Player1");
+          let loser = userTypes["Player1"];
           socket.emit('game_over', {winner: userName, loser: loser});
           //setGameOver(true);
         }
@@ -140,18 +166,6 @@ function App()
     });
   }
   
-  
-  const loginClick = () =>
-  {
-    if(inputRef != null)
-    {
-      const uName = inputRef.current.value;
-      setUserName(uName);
-      setLogin(true);
-      socket.emit('login_success', {'username': uName}); 
-    }
-  }
-  
   const reset = () =>
   {
     socket.emit('game_reset_requested');
@@ -160,10 +174,41 @@ function App()
   
   useEffect(() => 
       {
+        socket.on('user_list_update', (data) =>
+        {
+          console.log("New user: " + data.username);
+          const listCopy = [...userList];
+          if(data.username === userName)
+          {
+            listCopy.push(data.username + ": " + Object.keys(userTypes).find(key => userTypes[key] === data.username)+ " (That's you!)");
+          }
+          else
+          {
+            listCopy.push(data.username);
+          }
+          setList(listCopy);
+          setUserTypes(data.users_data);
+          let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
+          if(userType === "Player1")
+          {
+            setTurn(true);
+            alert("It's your turn!");
+          }
+          else if(userType === "Player2")
+          {
+            alert("You're Player 2! Please wait for your turn.");
+          }
+          else if(userType === "Spectator")
+          {
+            alert("You are a Spectator. Enjoy watching the game!");  
+          }
+        });
+        
         socket.on('board_updated', (data) => 
         {
+          let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
           setBoard(data);
-          if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
+          if(userType === "Player1" || userType === "Player2")
           {
             setTurn(true);
             if(!isGameOver)
@@ -172,45 +217,6 @@ function App()
             }
           }
           
-        });
-        
-        socket.on('user-type-granted', (data) =>
-        {
-          userType = data.userInfo.uType;
-          //console.log("data.userInfo.uType: " + data.userInfo.uType);
-          bval = data.userInfo.bval;
-          setUserTypes(data.client_info);
-          console.log("data.client_info: ", data.client_info);
-          setType(data.userInfo.uType);
-          //console.log("data.client_info[userName]: " + data.client_info[userName]);
-          if(userTypes[userName] === "Player1")
-          {
-            setTurn(true);
-            alert("It's your turn!");
-          }
-          else if(userTypes[userName] === "Player2")
-          {
-            alert("You're Player 2! Please wait for your turn.");
-          }
-          else if(userTypes[userName === "Spectator"])
-          {
-            alert("You are a Spectator. Enjoy watching the game!");  
-          }
-        });  
-
-        socket.on('new-user-notice', (data) =>
-        {
-          console.log("New user: " + data.username);
-          const listCopy = [...userList];
-          if(data.username === userName)
-          {
-            listCopy.push(data.username + ": " + userTypes[data.username] + " (That's you!)");
-          }
-          else
-          {
-            listCopy.push(data.username);
-          }
-          setList(listCopy);
         });
         
         socket.on('game_results', (data) =>
@@ -237,14 +243,11 @@ function App()
           setGameOver(false);
           setResults((<div></div>));
           setConfetti(<div></div>);
-          if(userTypes[userName] === "Player1" || userTypes[userName] === "Player2")
+          let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
+          if(userType === "Player1")
           {
-            setTurn(!isTurn);
-            
-            if(isTurn && !isGameOver)
-            {
-              alert("It's your turn!");
-            }
+            setTurn(true);
+            alert("It's your turn!");
           }
           else
           {
