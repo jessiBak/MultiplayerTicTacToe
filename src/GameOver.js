@@ -2,7 +2,7 @@ import React from 'react';
 
 export function GameOver(props)
 {
-    if(props.winner != "")
+    if(props.winner !== "")
     {
     return(
       <div>

@@ -1,6 +1,6 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
-import {Board, Box} from './Board.js';
+import {Board} from './Board.js';
 import {Login} from './LoginScreen.js';          
 import {GameOver} from './GameOver.js';
 import {LeaderBoard} from './LeaderBoard.js';
@@ -19,7 +19,6 @@ function App()
   const [isLogged, setLogin] = useState(false);
   const [userName, setUserName] = useState(null);
   const [userTypes, setUserTypes] = useState({"Player1": "", "Player2": "", "Spectators": []});
-  const [type, setType] = useState("");
   const inputRef = useRef(null);
   const [isTurn, setTurn] = useState(false);
   const [isGameOver, setGameOver] = useState(false);
@@ -86,7 +85,6 @@ function App()
   const boxClick = (index) =>
   {
       console.log(userName + " clicked a box");
-      let boxdata;
       let newBoard = [...board];
       let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
       if(userType === "Player1" && isTurn && board[index] === null && !isGameOver)
@@ -239,7 +237,6 @@ function App()
         
         socket.on('game_results', (data) =>
         {
-          let i = 0;
           setTurn(false);
           setGameOver(true);
           console.log(data.winner + ' wins!');
@@ -279,7 +276,7 @@ function App()
           setLeaderBoardInfo(data)
         });
         
-      }, [board, userTypes, isGameOver, isTurn, leaderboardInfo, userList,]); 
+      }, [board, userTypes, userName, isGameOver, isTurn, leaderboardInfo, userList,]); 
       
       
   
