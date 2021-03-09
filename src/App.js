@@ -105,7 +105,7 @@ function App()
         socket.emit('box-clicked', newBoard);
         setTurn(false);
       } 
-      else if(userType === "Spectator")
+      else if(userTypes.Spectators.includes(userName))
       {
         alert("Spectators cannot change the state of the board."); 
       }
@@ -177,28 +177,46 @@ function App()
         socket.on('user_list_update', (data) =>
         {
           console.log("New user: " + data.username);
+          console.log('userTypes before:', userTypes);
+          setUserTypes(data['users_data']);
+          console.log('userTypes after:', userTypes);
           const listCopy = [...userList];
-          if(data.username === userName)
+          if(data['username'] === userName)
           {
-            listCopy.push(data.username + ": " + Object.keys(userTypes).find(key => userTypes[key] === data.username)+ " (That's you!)");
+            if(userTypes['Spectators'].includes(userName))
+            {
+              listCopy.push(data.username + ": Spectator (That's you!)");
+            }
+            else
+            {
+              listCopy.push(data.username + ": " + Object.keys(userTypes).find(key => userTypes[key] === userName) + " (That's you!)");
+            }
+  
           }
           else
           {
-            listCopy.push(data.username);
+            if(userTypes.Spectators.includes(data.username))
+            {
+              listCopy.push(data.username + ": Spectator");
+            }
+            else
+            {
+              listCopy.push(data.username);
+            }
           }
           setList(listCopy);
-          setUserTypes(data.users_data);
+          
           let userType =  Object.keys(userTypes).find(key => userTypes[key] === userName);
           if(userType === "Player1")
           {
             setTurn(true);
-            alert("It's your turn!");
+            alert("You're Player1! It's your turn now!");
           }
           else if(userType === "Player2")
           {
             alert("You're Player 2! Please wait for your turn.");
           }
-          else if(userType === "Spectator")
+          else if(userTypes['Spectators'].includes(userName))
           {
             alert("You are a Spectator. Enjoy watching the game!");  
           }
