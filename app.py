@@ -1,5 +1,9 @@
+'''
+Handles the server side of a live multiplayer tic tac toe game
+'''
+
 import os
-from flask import Flask, send_from_directory, json, session
+from flask import Flask, send_from_directory, json #, session
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -7,88 +11,100 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-app = Flask(__name__, static_folder='./build/static')
+APP = Flask(__name__, static_folder='./build/static')
 
 # Point SQLAlchemy to your Heroku database
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 # Gets rid of a warning
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+DB = SQLAlchemy(APP)
 import models
 
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+CORS = CORS(APP, resources={r"/*": {"origins": "*"}})
 
-socketio = SocketIO(
-    app,
+SOCKETIO = SocketIO(
+    APP,
     cors_allowed_origins="*",
     json=json,
     manage_session=False
 )
 
-client_types = {}
-leaderboard_json = []
-num_Of_Clients = 0
-
 def rows_2_lst(query):
+    '''
+    function to convert a query into a list of dicts
+    '''
     return [row.serialize for row in query.all()]
 
-@app.route('/', defaults={"filename": "index.html"})
-@app.route('/<path:filename>')
+@APP.route('/', defaults={"filename": "index.html"})
+@APP.route('/<path:filename>')
 def index(filename):
+    '''
+    function to help with routing
+    '''
     return send_from_directory('./build', filename)
 
-@socketio.on('connect')
+@SOCKETIO.on('connect')
 def on_connect():
+    '''
+    function to tell server what to do when new user connects
+    '''
     print('User connected!')
-
-@socketio.on('disconnect')
+@SOCKETIO.on('disconnect')
 def on_disconnect():
+    '''
+    function to tell server what to do when a user disconnects
+    '''
     print('User disconnected!')
-    
-@socketio.on('box-clicked')
+@SOCKETIO.on('box-clicked')
 def on_box_clicked(data):
+    '''
+    function to tell server how to handle box-click events
+    '''
     print(str(data))
-    socketio.emit('board_updated',  data, broadcast=True, include_self=False)
-
+    SOCKETIO.emit('board_updated', data, broadcast=True, include_self=False)
 #map client usernames to ID numbers
-@socketio.on('login_success')
+@SOCKETIO.on('login_success')
 def on_l_success(data):
+    '''
+    function to tell server how to handle successful login
+    '''
     leaderboard_result = models.Player.query.order_by(models.Player.score.desc()).limit(10)
     leaderboard_json = rows_2_lst(leaderboard_result)
     player_exists = models.Player.query.filter_by(username=data['username']).first()
     if not player_exists:
         new_player = models.Player(username=data['username'], score=100)
-        db.session.add(new_player)
-        db.session.commit()
-    
-    socketio.emit('user_list_update', {'username': data['username'], 'users_data': data['users_data']}, broadcast=True, include_self=True)
-    socketio.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
-    
-
-@socketio.on('game_over')
+        DB.session.add(new_player)
+        DB.session.commit()
+    SOCKETIO.emit('user_list_update', {'username': data['username'], 'users_data': data['users_data']}, broadcast=True, include_self=True)
+    SOCKETIO.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
+@SOCKETIO.on('game_over')
 def on_game_over(data):
+    '''
+    function to tell server how to handle game ending
+    '''
     if data['winner'] != "":
         winner = models.Player.query.filter_by(username=data['winner']).first()
         winner.score = winner.score + 1
-        db.session.commit()
+        DB.session.commit()
         loser = models.Player.query.filter_by(username=data['loser']).first()
         loser.score = loser.score - 1
-        db.session.commit()
-        
+        DB.session.commit()
     leaderboard_result = models.Player.query.order_by(models.Player.score.desc()).limit(10)
     leaderboard_json = rows_2_lst(leaderboard_result)
-    socketio.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
-    socketio.emit('game_results', data, broadcast=True, include_self=True)
-    
-@socketio.on('game_reset_requested')
+    SOCKETIO.emit('leaderboard_info_update', leaderboard_json, broadcast=True, include_self=True)
+    SOCKETIO.emit('game_results', data, broadcast=True, include_self=True)
+@SOCKETIO.on('game_reset_requested')
 def on_game_reset():
-    socketio.emit('game_reset', broadcast=True, include_self=True)
-
+    '''
+    function to tell server how to reset game
+    '''
+    SOCKETIO.emit('game_reset', broadcast=True, include_self=True)
 if __name__ == "__main__":
-    db.create_all() 
-    socketio.run(
-        app,
+    DB.create_all()
+    SOCKETIO.run(
+        APP,
         host=os.getenv('IP', '0.0.0.0'),
         port=8081 if os.getenv('C9_PORT') else int(os.getenv('PORT', 8081)),
     )
+    
