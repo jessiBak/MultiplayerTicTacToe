@@ -19,6 +19,8 @@
 .env.production.local
 sql.env
 .env
+.pylintrc
+.prettierignore
 
 npm-debug.log*
 yarn-debug.log*
