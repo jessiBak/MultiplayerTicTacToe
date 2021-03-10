@@ -120,13 +120,16 @@ function App() {
     }
     //checking to see if there's a winner yet (or if it's a tie)
     let winner_status = calculateWinner(newBoard);
+    console.log("Winner status is: " + winner_status);
     if (winner_status) {
       if (winner_status === "X") {
         let loser = userTypes["Player2"];
         socket.emit("game_over", { winner: userName, loser: loser });
+        console.log("Emitting game_over now.");
       } else if (winner_status === "O") {
         let loser = userTypes["Player1"];
         socket.emit("game_over", { winner: userName, loser: loser });
+        console.log("Emitting game_over now.");
       }
     } else {
       console.log("Board: " + String(board));
@@ -136,6 +139,7 @@ function App() {
           winner: "",
           username: "It's a tie! No one",
         });
+        console.log("Emitting game_over now.");
       }
       console.log("No winner yet");
     }
