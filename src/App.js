@@ -59,7 +59,7 @@ function App() {
   }
 
   const loginClick = () => {
-    if (inputRef != null) {
+    if (inputRef != null && inputRef.current.value.trim() != "") {
       const uName = inputRef.current.value;
       setUserName(uName);
       let users = { ...userTypes };
