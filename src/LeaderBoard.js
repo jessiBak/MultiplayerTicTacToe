@@ -27,16 +27,14 @@ export function LeaderBoard(props) {
   return (
     <div>
       <table id="leaderboard-table">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Score</th>
-          <th>Rank</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Rank</th>
+          </tr>
         </thead>
-        <tbody>
-          {createTable(props.info, props.username)}
-        </tbody>
+        <tbody>{createTable(props.info, props.username)}</tbody>
       </table>
     </div>
   );

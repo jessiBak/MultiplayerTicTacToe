@@ -1,4 +1,4 @@
-# Project 2: Multiplayer Tic-Tac-Toe (Milestone 2)
+# Project 2: Multiplayer Tic-Tac-Toe!
 
 
 ## Requirements
@@ -17,9 +17,8 @@
 1. Ensure that there are no heroku apps in the project directory (to check: `git remote -v` to remove: `git remote rm heroku`)
 2. Create a Heroku app: `heroku create --buildpack heroku/python`
 2. Add nodejs buildpack: `heroku buildpacks:add --index 1 heroku/nodejs`
-3. Push to Heroku: `git push heroku milestone_2:main`
-    * (Because deploying to Heroku prevents app.py from being restarted, any new users may be assigned as Spectators.)
-    * (Also, there are multiple alerts for events. If you keep clicking OK, eventually you'll be able to continue.)
+3. Push to Heroku: `git push heroku main`
+    * (There are multiple alerts for events. If you keep clicking OK, eventually you'll be able to continue.)
         * (I'm so sorry)
 
 ## Technical Issues
