@@ -35,12 +35,40 @@ def rows_2_lst(query):
     '''
     return [row.serialize for row in query.all()]
 
+def add_new_user(usr):
+    '''
+    function to add a new user to the database
+    '''
+    player_exists = models.Player.query.filter_by(
+        username=usr).first()
+    if not player_exists:
+        new_player = models.Player(username=usr, score=100)
+        DB.session.add(new_player)
+        DB.session.commit()
+    return models.Player.query.all()
+
+def add_win(usr):
+    '''
+    function to increase a user's score by 1
+    '''
+    winner = models.Player.query.filter_by(username=usr).first()
+    winner.score = winner.score + 1
+    DB.session.commit()
+
+def add_loss(usr):
+    '''
+    function to decrease a user's score by 1
+    '''
+    loser = models.Player.query.filter_by(username=usr).first()
+    loser.score = loser.score - 1
+    DB.session.commit()
+
 
 @APP.route('/', defaults={"filename": "index.html"})
 @APP.route('/<path:filename>')
 def index(filename):
     '''
-    function to help with routing
+    function to send a file
     '''
     return send_from_directory('./build', filename)
 
@@ -76,21 +104,16 @@ def on_l_success(data):
     '''
     function to tell server how to handle successful login
     '''
-    leaderboard_result = models.Player.query.order_by(
-        models.Player.score.desc()).limit(10)
-    leaderboard_json = rows_2_lst(leaderboard_result)
-    player_exists = models.Player.query.filter_by(
-        username=data['username']).first()
-    if not player_exists:
-        new_player = models.Player(username=data['username'], score=100)
-        DB.session.add(new_player)
-        DB.session.commit()
+    add_new_user(data['username'])
     SOCKETIO.emit('user_list_update', {
         'username': data['username'],
         'users_data': data['users_data']
     },
                   broadcast=True,
                   include_self=True)
+    leaderboard_result = models.Player.query.order_by(
+        models.Player.score.desc()).limit(10)
+    leaderboard_json = rows_2_lst(leaderboard_result)
     SOCKETIO.emit('leaderboard_info_update',
                   leaderboard_json,
                   broadcast=True,
@@ -103,12 +126,8 @@ def on_game_over(data):
     function to tell server how to handle game ending
     '''
     if data['winner'] != "":
-        winner = models.Player.query.filter_by(username=data['winner']).first()
-        winner.score = winner.score + 1
-        DB.session.commit()
-        loser = models.Player.query.filter_by(username=data['loser']).first()
-        loser.score = loser.score - 1
-        DB.session.commit()
+        add_win(data['winner'])
+        add_loss(data['loser'])
     leaderboard_result = models.Player.query.order_by(
         models.Player.score.desc()).limit(10)
     leaderboard_json = rows_2_lst(leaderboard_result)

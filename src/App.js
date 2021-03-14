@@ -221,7 +221,6 @@ function App() {
         </div>
       );
       setResults(r);
-      //let confetti = ( <img src="https://i.gifer.com/5Q10.gif"/>);
       let confetti = <img src="https://i.gifer.com/XfQB.gif" alt="confetti" />;
       setConfetti(confetti);
     });
