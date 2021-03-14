@@ -63,6 +63,14 @@ def add_loss(usr):
     loser.score = loser.score - 1
     DB.session.commit()
 
+def add_new_lst(usr, lst):
+    '''
+    function to test the logic of add_new_user
+    '''
+    if usr not in lst:
+        lst.append(usr)
+    return lst
+
 
 @APP.route('/', defaults={"filename": "index.html"})
 @APP.route('/<path:filename>')
