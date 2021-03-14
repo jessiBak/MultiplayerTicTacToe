@@ -26,13 +26,17 @@ function createTable(data, usr) {
 export function LeaderBoard(props) {
   return (
     <div>
-      <table>
+      <table id="leaderboard-table">
+      <thead>
         <tr>
           <th>Username</th>
           <th>Score</th>
           <th>Rank</th>
         </tr>
-        {createTable(props.info, props.username)}
+        </thead>
+        <tbody>
+          {createTable(props.info, props.username)}
+        </tbody>
       </table>
     </div>
   );
