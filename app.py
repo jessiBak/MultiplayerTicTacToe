@@ -70,6 +70,15 @@ def add_new_lst(usr, lst):
     if usr not in lst:
         lst.append(usr)
     return lst
+def change_score(users, usr, winner):
+    '''
+    function to test the logic of the score changing functions
+    '''
+    if winner:
+        users[usr]['score'] = users[usr]['score'] + 1
+    elif not winner:
+        users[usr]['score'] = users[usr]['score'] - 1
+    return users[usr]
 
 
 @APP.route('/', defaults={"filename": "index.html"})
