@@ -35,17 +35,18 @@ def rows_2_lst(query):
     '''
     return [row.serialize for row in query.all()]
 
+
 def add_new_user(usr):
     '''
     function to add a new user to the database
     '''
-    player_exists = models.Player.query.filter_by(
-        username=usr).first()
+    player_exists = models.Player.query.filter_by(username=usr).first()
     if not player_exists:
         new_player = models.Player(username=usr, score=100)
         DB.session.add(new_player)
         DB.session.commit()
     return models.Player.query.all()
+
 
 def add_win(usr):
     '''
@@ -55,6 +56,7 @@ def add_win(usr):
     winner.score = winner.score + 1
     DB.session.commit()
 
+
 def add_loss(usr):
     '''
     function to decrease a user's score by 1
@@ -63,6 +65,7 @@ def add_loss(usr):
     loser.score = loser.score - 1
     DB.session.commit()
 
+
 def add_new_lst(usr, lst):
     '''
     function to test the logic of add_new_user
@@ -70,6 +73,8 @@ def add_new_lst(usr, lst):
     if usr not in lst:
         lst.append(usr)
     return lst
+
+
 def change_score(users, usr, winner):
     '''
     function to test the logic of the score changing functions
